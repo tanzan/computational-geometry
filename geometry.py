@@ -1,4 +1,5 @@
 import enum
+from typing import Dict
 
 import numpy as np
 
@@ -29,7 +30,9 @@ class SegmentPos(enum.Enum):
     ON_LINE = 2
     LEFT = 3
     RIGHT = 4
-    __str__ = lambda self: SegmentPos._value_to_str.get(self)
+
+    def __str__(self):
+        return SegmentPos._value_to_str.get(self)
 
 
 SegmentPos.__new__ = lambda cls, value: (cls._str_to_value[value]
@@ -65,7 +68,7 @@ class Segment:
         return "SEGMENT(" + str(self._start) + "," + str(self._end) + ")"
 
     def relative_pos(self, point):
-        c = np.cross(self.vec, point.vec)
+        c = np.cross(self.vec, point.vec - self.start.vec)
         if c == 0:
             if (self.start.x <= point.x <= self.end.x) or (
                     self.end.x <= point.x <= self.start.x):
@@ -81,7 +84,9 @@ class PolygonPos(enum.Enum):
     BORDER = 1
     OUTSIDE = 2
     INSIDE = 3
-    __str__ = lambda self: PolygonPos._value_to_str.get(self)
+
+    def __str__(self):
+        return PolygonPos._value_to_str.get(self)
 
 
 PolygonPos.__new__ = lambda cls, value: (cls._str_to_value[value]
@@ -114,6 +119,9 @@ class Triangle:
     def c(self):
         return self._points[2]
 
+    def __str__(self):
+        return 'TRIANGLE(' + str(self.a) + ',' + str(self.b) + ',' + str(self.c) + ')'
+
     def normalized(self):
         def less(p1, p2):
             if p1.x == p2.x:
@@ -122,16 +130,30 @@ class Triangle:
                 return p1.x < p2.x
 
         n = len(self._points)
+
         min_i = 0
-        min_p = self._points[0]
         for i in range(1, n):
-            if less(self._points[i], min_p):
+            if less(self._points[i], self._points[min_i]):
                 min_i = i
-                min_p = self._points[i]
 
         normalized_points = []
         for i in range(0, n):
             normalized_points.append(self._points[(i + min_i) % n])
+
+        hi_i = 0
+        for i in range(1, n):
+            if self._points[hi_i].y < self._points[i].y:
+                hi_i = i
+
+        c = Segment(self._points[(hi_i - 1) % n], self._points[hi_i]).relative_pos(self._points[(hi_i + 1) % n])
+
+        if c == SegmentPos.ON_SEGMENT or c == SegmentPos.ON_LINE:
+            is_ccv = self._points[(hi_i - 1) % n].x < self._points[(hi_i + 1) % n].x
+        else:
+            is_ccv = c == SegmentPos.LEFT
+
+        if is_ccv:
+            normalized_points.reverse()
 
         return Triangle(normalized_points[0], normalized_points[1], normalized_points[2])
 
@@ -145,11 +167,9 @@ class Triangle:
     def relative_pos(self, point):
         segs = self.segments
         for seg in segs:
-            print(seg, point)
             pos = seg.relative_pos(point)
-            print(pos)
             if pos == SegmentPos.ON_SEGMENT:
                 return PolygonPos.BORDER
-            if pos != SegmentPos.LEFT:
+            if pos != SegmentPos.RIGHT:
                 return PolygonPos.OUTSIDE
         return PolygonPos.INSIDE

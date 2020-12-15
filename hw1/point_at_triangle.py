@@ -16,7 +16,7 @@ def read_input(filename):
             point = line.split()
             points.append(Point(float(point[0]), float(point[1])))
         assert (n == len(points))
-        return Input(Triangle(p1, p2, p3), points)
+        return Input(Triangle(p1, p2, p3).normalized(), points)
 
 
 def read_expected(filename):
@@ -35,7 +35,5 @@ def calc_positions(inputs):
 
 
 if __name__ == '__main__':
-    print (calc_positions(read_input('data/hw1_2_1.txt')))
-    print (read_expected('data/hw1_2_1_expected.txt'))
     assert calc_positions(read_input('data/hw1_2_1.txt')) == read_expected('data/hw1_2_1_expected.txt')
     assert calc_positions(read_input('data/hw1_2_2.txt')) == read_expected('data/hw1_2_2_expected.txt')
