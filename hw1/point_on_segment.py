@@ -1,21 +1,19 @@
 from geometry import *
 from collections import namedtuple
+from test_util import *
 
 Input = namedtuple('Input', 'segment points')
 
 
 def read_input(filename):
     with open(filename) as f:
-        segment = f.readline().split()
+        segment = read_point_seq(f.readline())
         n = float(f.readline())
-        p1 = Point(float(segment[0]), float(segment[1]))
-        p2 = Point(float(segment[2]), float(segment[3]))
         points = []
         for line in f:
-            point = line.split()
-            points.append(Point(float(point[0]), float(point[1])))
+            points.append(read_point(line))
         assert (n == len(points))
-        return Input(Segment(p1, p2), points)
+        return Input(Segment(segment[0], segment[1]), points)
 
 
 def read_expected(filename):

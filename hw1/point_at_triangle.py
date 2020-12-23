@@ -1,4 +1,5 @@
 from geometry import *
+from test_util import *
 from collections import namedtuple
 
 Input = namedtuple('Input', 'triangle points')
@@ -6,26 +7,13 @@ Input = namedtuple('Input', 'triangle points')
 
 def read_input(filename):
     with open(filename) as f:
-        triangle = f.readline().split()
+        triangle = read_point_seq(f.readline())
         n = int(f.readline())
-        p1 = Point(float(triangle[0]), float(triangle[1]))
-        p2 = Point(float(triangle[2]), float(triangle[3]))
-        p3 = Point(float(triangle[4]), float(triangle[5]))
         points = []
         for line in f:
-            point = line.split()
-            points.append(Point(float(point[0]), float(point[1])))
+            points.append(read_point(line))
         assert (n == len(points))
-        return Input(Triangle(p1, p2, p3).normalized(), points)
-
-
-def read_expected(filename):
-    with open(filename) as f:
-        expected = []
-        for line in f.readlines():
-            expected.append(PolygonPos(line.strip()))
-        return expected
-
+        return Input(Triangle(triangle[0], triangle[1], triangle[2]).normalized(), points)
 
 def calc_positions(inputs):
     positions = []
@@ -35,5 +23,5 @@ def calc_positions(inputs):
 
 
 if __name__ == '__main__':
-    assert calc_positions(read_input('data/hw1_2_1.txt')) == read_expected('data/hw1_2_1_expected.txt')
-    assert calc_positions(read_input('data/hw1_2_2.txt')) == read_expected('data/hw1_2_2_expected.txt')
+    assert calc_positions(read_input('data/hw1_2_1.txt')) == read_expected_polygon_pos('data/hw1_2_1_expected.txt')
+    assert calc_positions(read_input('data/hw1_2_2.txt')) == read_expected_polygon_pos('data/hw1_2_2_expected.txt')
