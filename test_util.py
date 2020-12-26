@@ -1,4 +1,10 @@
 from geometry import *
+import os
+
+
+def data(path, file):
+    return os.path.dirname(path) + "/data/" + file
+
 
 def read_point_seq(line):
     points = []

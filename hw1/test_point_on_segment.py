@@ -31,6 +31,9 @@ def calc_positions(inputs):
     return positions
 
 
-if __name__ == '__main__':
-    assert calc_positions(read_input('data/hw1_1_1.txt')) == read_expected('data/hw1_1_1_expected.txt')
-    assert calc_positions(read_input('data/hw1_1_2.txt')) == read_expected('data/hw1_1_2_expected.txt')
+def test_case_1():
+    assert calc_positions(read_input(data(__file__, 'hw1_1_1.txt'))) == read_expected(data(__file__, 'hw1_1_1_expected.txt'))
+
+
+def test_case_2():
+    assert calc_positions(read_input(data(__file__, 'hw1_1_2.txt'))) == read_expected(data(__file__, 'hw1_1_2_expected.txt'))

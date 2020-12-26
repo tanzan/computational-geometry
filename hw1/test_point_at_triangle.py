@@ -15,6 +15,7 @@ def read_input(filename):
         assert (n == len(points))
         return Input(Triangle(triangle[0], triangle[1], triangle[2]).normalized(), points)
 
+
 def calc_positions(inputs):
     positions = []
     for point in inputs.points:
@@ -22,6 +23,9 @@ def calc_positions(inputs):
     return positions
 
 
-if __name__ == '__main__':
-    assert calc_positions(read_input('data/hw1_2_1.txt')) == read_expected_polygon_pos('data/hw1_2_1_expected.txt')
-    assert calc_positions(read_input('data/hw1_2_2.txt')) == read_expected_polygon_pos('data/hw1_2_2_expected.txt')
+def test_case_1():
+    assert calc_positions(read_input(data(__file__, 'hw1_2_1.txt'))) == read_expected_polygon_pos(data(__file__, 'hw1_2_1_expected.txt'))
+
+
+def test_case_2():
+    assert calc_positions(read_input(data(__file__, 'hw1_2_2.txt'))) == read_expected_polygon_pos(data(__file__, 'hw1_2_2_expected.txt'))
