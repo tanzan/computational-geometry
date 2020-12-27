@@ -1,5 +1,4 @@
 import enum
-from typing import Dict
 
 import numpy as np
 
@@ -100,27 +99,23 @@ PolygonPos._str_to_value = {'BORDER': PolygonPos.BORDER,
 PolygonPos._value_to_str = {val: key for key, val in PolygonPos._str_to_value.items()}
 
 
-class Triangle:
-    def __init__(self, a, b, c):
-        self._points = []
-        self._points.append(a)
-        self._points.append(b)
-        self._points.append(c)
+class Polygon:
+    def __init__(self, points):
+        self._points = points
 
     @property
-    def a(self):
-        return self._points[0]
-
-    @property
-    def b(self):
-        return self._points[1]
-
-    @property
-    def c(self):
-        return self._points[2]
+    def points(self):
+        return self._points
 
     def __str__(self):
-        return 'TRIANGLE(' + str(self.a) + ',' + str(self.b) + ',' + str(self.c) + ')'
+        return f"POLYGON({', '.join(str(p) for p in self.points)})"
+
+    @property
+    def segments(self):
+        segs = []
+        for i in range(len(self.points)):
+            segs.append(Segment(self.points[i], self.points[(i + 1) % len(self.points)]))
+        return segs
 
     def normalized(self):
         def less(p1, p2):
@@ -129,40 +124,57 @@ class Triangle:
             else:
                 return p1.x < p2.x
 
-        n = len(self._points)
+        n = len(self.points)
 
         min_i = 0
         for i in range(1, n):
-            if less(self._points[i], self._points[min_i]):
+            if less(self.points[i], self.points[min_i]):
                 min_i = i
 
         normalized_points = []
         for i in range(0, n):
-            normalized_points.append(self._points[(i + min_i) % n])
+            normalized_points.append(self.points[(i + min_i) % n])
 
         hi_i = 0
         for i in range(1, n):
-            if self._points[hi_i].y < self._points[i].y:
+            if self.points[hi_i].y < self.points[i].y:
                 hi_i = i
 
-        c = Segment(self._points[(hi_i - 1) % n], self._points[hi_i]).relative_pos(self._points[(hi_i + 1) % n])
+        c = Segment(self.points[(hi_i - 1) % n], self.points[hi_i]).relative_pos(self.points[(hi_i + 1) % n])
 
         if c == SegmentPos.ON_SEGMENT or c == SegmentPos.ON_LINE:
-            is_ccv = self._points[(hi_i - 1) % n].x < self._points[(hi_i + 1) % n].x
+            is_ccv = self.points[(hi_i - 1) % n].x < self.points[(hi_i + 1) % n].x
         else:
             is_ccv = c == SegmentPos.LEFT
 
         if is_ccv:
             normalized_points.reverse()
 
-        return Triangle(normalized_points[0], normalized_points[1], normalized_points[2])
+        return Polygon(normalized_points)
+
+
+class Triangle(Polygon):
+    def __init__(self, a, b, c):
+        super().__init__([a, b, c])
 
     @property
-    def segments(self):
-        segs = []
-        for i in range(len(self._points)):
-            segs.append(Segment(self._points[i], self._points[(i + 1) % len(self._points)]))
-        return segs
+    def a(self):
+        return self.points[0]
+
+    @property
+    def b(self):
+        return self.points[1]
+
+    @property
+    def c(self):
+        return self.points[2]
+
+    def __str__(self):
+        return f'TRIANGLE({self.a} , {self.b}, {self.c})'
+
+    def normalized(self):
+        normalized = super().normalized()
+        return Triangle(normalized.points[0], normalized.points[1], normalized.points[2])
 
     def relative_pos(self, point):
         segs = self.segments

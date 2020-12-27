@@ -1,4 +1,3 @@
-from geometry import *
 from collections import namedtuple
 from test_util import *
 
