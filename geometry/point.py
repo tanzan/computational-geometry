@@ -20,3 +20,21 @@ class Point:
 
     def __str__(self):
         return str(self._x) + " " + str(self._y)
+
+    def __eq__(self, other):
+        return self.x == other.x and self.y == other.y
+
+    def __lt__(self, other):
+        if self.x == other.x:
+            return self.y < other.y
+
+        return self.x < other.x
+
+    def __le__(self, other):
+        return self.__eq__(other) or self.__lt__(other)
+
+    def lt_y(self, other):
+        if self.y == other.y:
+            return self.x < other.x
+
+        return self.y < other.y

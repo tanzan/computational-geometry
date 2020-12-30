@@ -41,17 +41,11 @@ class Polygon:
         return segs
 
     def normalized(self):
-        def less(p1, p2):
-            if p1.x == p2.x:
-                return p1.y < p2.y
-            else:
-                return p1.x < p2.x
-
         n = len(self.points)
 
         min_i = 0
         for i in range(1, n):
-            if less(self.points[i], self.points[min_i]):
+            if self.points[i] < self.points[min_i]:
                 min_i = i
 
         normalized_points = []
@@ -76,7 +70,34 @@ class Polygon:
         return Polygon(normalized_points)
 
     def relative_pos(self, point):
-        return PolygonPos.BORDER
+
+        def ray_position(s):
+            s_norm = s.normalized_y()
+            ray_pos = s_norm.relative_pos(point)
+            if ray_pos == SegmentPos.RIGHT:
+                if s_norm.start.y <= point.y <= s_norm.end.y:
+                    if point.y == s.start.y:
+                        # Ignore bottom point intersection
+                        return SegmentPos.LEFT
+                    else:
+                        return SegmentPos.RIGHT
+                else:
+                    return SegmentPos.LEFT
+            return ray_pos
+
+        n_cross = 0
+
+        for seg in self.segments:
+            pos = ray_position(seg)
+            if pos == SegmentPos.ON_SEGMENT:
+                return PolygonPos.BORDER
+            elif pos == SegmentPos.RIGHT:
+                n_cross += 1
+
+        if n_cross % 2 == 1:
+            return PolygonPos.INSIDE
+
+        return PolygonPos.OUTSIDE
 
 
 class Triangle(Polygon):

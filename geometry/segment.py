@@ -44,6 +44,16 @@ class Segment:
     def __str__(self):
         return "SEGMENT(" + str(self._start) + "," + str(self._end) + ")"
 
+    def normalized(self):
+        if self.start > self.end:
+            return Segment(self.end, self.start)
+        return Segment(self.start, self.end)
+
+    def normalized_y(self):
+        if self.end.lt_y(self.start):
+            return Segment(self.end, self.start)
+        return Segment(self.start, self.end)
+
     def relative_pos(self, point):
         c = np.cross(self.vec, point.vec - self.start.vec)
         if c == 0:

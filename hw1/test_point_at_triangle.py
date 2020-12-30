@@ -25,7 +25,7 @@ def read_input_polygon(filename):
         for line in f:
             points.append(read_point(line))
         assert (n == len(points))
-        return Input(Polygon(points).normalized(), points)
+        return Input(Polygon(shell).normalized(), points)
 
 
 def calc_positions(inputs):
