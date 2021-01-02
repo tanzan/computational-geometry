@@ -76,7 +76,7 @@ class Polygon:
             ray_pos = s_norm.relative_pos(point)
             if ray_pos == SegmentPos.RIGHT:
                 if s_norm.start.y <= point.y <= s_norm.end.y:
-                    if point.y == s.start.y:
+                    if point.y == s_norm.start.y:
                         # Ignore bottom point intersection
                         return SegmentPos.LEFT
                     else:

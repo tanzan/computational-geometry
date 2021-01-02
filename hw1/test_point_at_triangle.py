@@ -36,12 +36,20 @@ def calc_positions(inputs):
 
 
 def test_triangle_case_1():
-    assert calc_positions(read_input_triangle(data(__file__, 'hw1_2_1.txt'))) == read_expected_polygon_pos(data(__file__, 'hw1_2_1_expected.txt'))
+    assert calc_positions(read_input_triangle(data(__file__, 'hw1_2_1.txt'))) == read_expected_polygon_pos(
+        data(__file__, 'hw1_2_1_expected.txt'))
 
 
 def test_triangle_case_2():
-    assert calc_positions(read_input_triangle(data(__file__, 'hw1_2_2.txt'))) == read_expected_polygon_pos(data(__file__, 'hw1_2_2_expected.txt'))
+    assert calc_positions(read_input_triangle(data(__file__, 'hw1_2_2.txt'))) == read_expected_polygon_pos(
+        data(__file__, 'hw1_2_2_expected.txt'))
 
 
-def test_polygon_case():
-    assert calc_positions(read_input_polygon(data(__file__, 'hw1_3.txt'))) == read_expected_polygon_pos(data(__file__, 'hw1_3_expected.txt'))
+def test_polygon_case_1():
+    assert calc_positions(read_input_polygon(data(__file__, 'hw1_3_1.txt'))) == read_expected_polygon_pos(
+        data(__file__, 'hw1_3_1expected.txt'))
+
+
+def test_polygon_case_2():
+    assert calc_positions(read_input_polygon(data(__file__, 'hw1_3_2.txt'))) == read_expected_polygon_pos(
+        data(__file__, 'hw1_3_2expected.txt'))

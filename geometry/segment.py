@@ -57,8 +57,9 @@ class Segment:
     def relative_pos(self, point):
         c = np.cross(self.vec, point.vec - self.start.vec)
         if c == 0:
-            if (self.start.x <= point.x <= self.end.x) or (
-                    self.end.x <= point.x <= self.start.x):
+            start_x, end_x = (self.start.x, self.end.x) if self.start.x < self.end.x else (self.end.x, self.start.x)
+            start_y, end_y = (self.start.y, self.end.y) if self.start.y < self.end.y else (self.end.y, self.start.y)
+            if (start_x <= point.x <= end_x) and (start_y <= point.y <= end_y):
                 return SegmentPos.ON_SEGMENT
             return SegmentPos.ON_LINE
         elif c > 0:
