@@ -1,5 +1,8 @@
 import enum
 from .segment import Segment, SegmentPos
+from .point import Point
+import numpy as np
+import bisect as bs
 
 
 class PolygonPos(enum.Enum):
@@ -24,6 +27,8 @@ PolygonPos._value_to_str = {val: key for key, val in PolygonPos._str_to_value.it
 
 class Polygon:
     def __init__(self, points):
+        if len(points) < 3:
+            raise ValueError("Polygon cannot contain less than 3 points")
         self._points = points
 
     @property
@@ -39,6 +44,9 @@ class Polygon:
         for i in range(len(self.points)):
             segs.append(Segment(self.points[i], self.points[(i + 1) % len(self.points)]))
         return segs
+
+    def prepared(self):
+        return self
 
     def normalized(self):
         n = len(self.points)
@@ -67,7 +75,7 @@ class Polygon:
         if is_ccv:
             normalized_points.reverse()
 
-        return Polygon(normalized_points)
+        return type(self)(normalized_points)
 
     def relative_pos(self, point):
 
@@ -120,7 +128,7 @@ class Triangle(Polygon):
         return f'TRIANGLE({self.a} , {self.b}, {self.c})'
 
     def normalized(self):
-        normalized = super().normalized()
+        normalized = Polygon(self.points).normalized()
         return Triangle(normalized.points[0], normalized.points[1], normalized.points[2])
 
     def relative_pos(self, point):
@@ -132,3 +140,54 @@ class Triangle(Polygon):
             if pos != SegmentPos.RIGHT:
                 return PolygonPos.OUTSIDE
         return PolygonPos.INSIDE
+
+    def centroid(self):
+        return Point((self.points[0].x + self.points[1].x + self.points[2].x) / 3,
+                     (self.points[0].y + self.points[1].y + self.points[2].y) / 3)
+
+
+class ConvexPolygon(Polygon):
+
+    def __init__(self, points):
+        super().__init__(points)
+        self._index = None
+        self._index_center = None
+
+    def _index_val_of(self, point):
+        return np.sign(point.y), (point.y - self._index_center.y) / (point.x - self._index_center.x)
+
+    def _indexed(self):
+        if len(self.points) < 5:
+            center_triangle = Triangle(self.points[0], self.points[1], self.points[2])
+        else:
+            center_triangle = Triangle(self.points[0], self.points[2], self.points[3])
+
+        self._index_center = center_triangle.centroid()
+
+        self._index = sorted([self._index_val_of(point) for point in self.points])
+
+        print(self._index)
+
+        return self
+
+    def prepared(self):
+        if self._index is None:
+            return self._indexed()
+        return self
+
+    def relative_pos(self, point):
+        if self._index is None:
+            return super().relative_pos(point)
+
+        i = bs.bisect_left(self._index, self._index_val_of(point))
+
+        pos = Segment(self.points[i], self.points[(i+1) % len(self.points)]).relative_pos(point)
+
+        print((str(point), i, pos))
+
+        if pos == SegmentPos.ON_SEGMENT:
+            return PolygonPos.BORDER
+        elif pos == SegmentPos.LEFT:
+            return PolygonPos.INSIDE
+
+        return PolygonPos.OUTSIDE

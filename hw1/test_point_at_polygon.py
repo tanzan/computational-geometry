@@ -15,7 +15,7 @@ def read_input_triangle(filename):
         return Input(Triangle(triangle[0], triangle[1], triangle[2]).normalized(), points)
 
 
-def read_input_polygon(filename):
+def read_input_polygon(filename, cls=Polygon):
     with open(filename) as f:
         size = int(f.readline())
         shell = read_point_seq(f.readline())
@@ -25,7 +25,7 @@ def read_input_polygon(filename):
         for line in f:
             points.append(read_point(line))
         assert (n == len(points))
-        return Input(Polygon(shell).normalized(), points)
+        return Input(cls(shell).normalized().prepared(), points)
 
 
 def calc_positions(inputs):
@@ -47,9 +47,14 @@ def test_triangle_case_2():
 
 def test_polygon_case_1():
     assert calc_positions(read_input_polygon(data(__file__, 'hw1_3_1.txt'))) == read_expected_polygon_pos(
-        data(__file__, 'hw1_3_1expected.txt'))
+        data(__file__, 'hw1_3_1_expected.txt'))
 
 
 def test_polygon_case_2():
     assert calc_positions(read_input_polygon(data(__file__, 'hw1_3_2.txt'))) == read_expected_polygon_pos(
-        data(__file__, 'hw1_3_2expected.txt'))
+        data(__file__, 'hw1_3_2_expected.txt'))
+
+
+def test_convex_polygon_case_1():
+    assert calc_positions(read_input_polygon(data(__file__, 'hw1_4_1.txt'), ConvexPolygon)) == read_expected_polygon_pos(
+        data(__file__, 'hw1_4_1_expected.txt'))
