@@ -153,8 +153,19 @@ class ConvexPolygon(Polygon):
         self._index = None
         self._index_center = None
 
-    def _index_val_of(self, point):
-        return np.sign(point.y), (point.y - self._index_center.y) / (point.x - self._index_center.x)
+    def _index_key(self, point):
+        centered_point = Point(point.x - self._index_center.x, point.y - self._index_center.y)
+        tan = np.abs(centered_point.y/centered_point.x)
+        if centered_point.x <= 0 < centered_point.y:
+            return 1, tan
+        elif centered_point.x > 0 and centered_point.y >= 0:
+            return 2, -tan
+        elif centered_point.x >= 0 > centered_point.y:
+            return 3, tan
+        elif centered_point.x < 0 and centered_point.y <= 0:
+            return 4, -tan
+        else:
+            raise ValueError()
 
     def _indexed(self):
         if len(self.points) < 5:
@@ -164,9 +175,8 @@ class ConvexPolygon(Polygon):
 
         self._index_center = center_triangle.centroid()
 
-        self._index = sorted([self._index_val_of(point) for point in self.points])
-
-        print(self._index)
+        self._index = sorted([(self._index_key(point), i) for i, point in enumerate(self.points)], key=lambda x: x[0])
+        self._index_keys = [key[0] for key in self._index]
 
         return self
 
@@ -179,15 +189,18 @@ class ConvexPolygon(Polygon):
         if self._index is None:
             return super().relative_pos(point)
 
-        i = bs.bisect_left(self._index, self._index_val_of(point))
+        if point == self._index_center:
+            return PolygonPos.INSIDE
 
-        pos = Segment(self.points[i], self.points[(i+1) % len(self.points)]).relative_pos(point)
+        i = bs.bisect_left(self._index_keys, self._index_key(point))
 
-        print((str(point), i, pos))
+        point_index = self._index[i][1]
+
+        pos = Segment(self.points[(point_index - 1) % len(self.points)], self.points[point_index]).relative_pos(point)
 
         if pos == SegmentPos.ON_SEGMENT:
             return PolygonPos.BORDER
-        elif pos == SegmentPos.LEFT:
+        elif pos == SegmentPos.RIGHT:
             return PolygonPos.INSIDE
 
         return PolygonPos.OUTSIDE

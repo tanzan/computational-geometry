@@ -57,4 +57,4 @@ def test_polygon_case_2():
 
 def test_convex_polygon_case_1():
     assert calc_positions(read_input_polygon(data(__file__, 'hw1_4_1.txt'), ConvexPolygon)) == read_expected_polygon_pos(
-        data(__file__, 'hw1_4_1_expected.txt'))
+        data(__file__, 'hw1_4_expected.txt'))
