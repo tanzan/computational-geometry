@@ -6,26 +6,22 @@ Input = namedtuple('Input', 'polygon points')
 
 def read_input_triangle(filename):
     with open(filename) as f:
-        triangle = read_point_seq(f.readline())
+        triangle = read_point_seq(f)
         n = int(f.readline())
         points = []
-        for line in f:
-            points.append(read_point(line))
-        assert (n == len(points))
+        for _ in range(n):
+            points.append(read_point(f))
         return Input(Triangle(triangle[0], triangle[1], triangle[2]).normalized(), points)
 
 
 def read_input_polygon(filename, cls=Polygon):
     with open(filename) as f:
-        size = int(f.readline())
-        shell = read_point_seq(f.readline())
-        assert size == len(shell)
+        polygon = read_polygon(f, cls)
         n = int(f.readline())
         points = []
-        for line in f:
-            points.append(read_point(line))
-        assert (n == len(points))
-        return Input(cls(shell).normalized().prepared(), points)
+        for _ in range(n):
+            points.append(read_point(f))
+        return Input(polygon.normalized().prepared(), points)
 
 
 def calc_positions(inputs):

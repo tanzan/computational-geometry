@@ -44,6 +44,14 @@ class Segment:
     def __str__(self):
         return "SEGMENT(" + str(self._start) + "," + str(self._end) + ")"
 
+    @property
+    def angle(self):
+        v = self.vec
+        a = np.arctan2(v[1], v[0])
+        if a < 0:
+            return a + 2 * np.pi
+        return a
+
     def normalized(self):
         if self.start > self.end:
             return Segment(self.end, self.start)

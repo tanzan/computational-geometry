@@ -6,12 +6,11 @@ Input = namedtuple('Input', 'segment points')
 
 def read_input(filename):
     with open(filename) as f:
-        segment = read_point_seq(f.readline())
-        n = float(f.readline())
+        segment = read_point_seq(f)
+        n = int(f.readline())
         points = []
-        for line in f:
-            points.append(read_point(line))
-        assert (n == len(points))
+        for _ in range(n):
+            points.append(read_point(f))
         return Input(Segment(segment[0], segment[1]), points)
 
 
