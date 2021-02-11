@@ -3,6 +3,8 @@ from .segment import Segment, SegmentPos
 from .point import Point
 import numpy as np
 import bisect as bs
+# TODO howto import the whole submodule
+from .angle import oriented as oriented_angle
 
 
 class PolygonPos(enum.Enum):
@@ -107,6 +109,17 @@ class Polygon:
 
         return PolygonPos.OUTSIDE
 
+    def is_convex(self):
+
+        norm = self.normalized()
+        segs = norm.segments
+
+        for i in range(len(segs)):
+            if oriented_angle(segs[i].reversed(), segs[(i + 1) % len(segs)]) <= 0:
+                return False
+
+        return True
+
 
 class Triangle(Polygon):
     def __init__(self, a, b, c):
@@ -155,7 +168,7 @@ class ConvexPolygon(Polygon):
 
     def _index_key(self, point):
         centered_point = Point(point.x - self._index_center.x, point.y - self._index_center.y)
-        tan = np.abs(centered_point.y/centered_point.x)
+        tan = np.abs(centered_point.y / centered_point.x)
         if centered_point.x <= 0 < centered_point.y:
             return 1, tan
         elif centered_point.x > 0 and centered_point.y >= 0:

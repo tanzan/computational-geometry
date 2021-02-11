@@ -52,6 +52,9 @@ class Segment:
             return a + 2 * np.pi
         return a
 
+    def reversed(self):
+        return Segment(self.end, self.start)
+
     def normalized(self):
         if self.start > self.end:
             return Segment(self.end, self.start)
