@@ -16,12 +16,12 @@ def read_input_triangle(filename):
 
 def read_input_polygon(filename, cls=Polygon):
     with open(filename) as f:
-        polygon = read_polygon(f, cls)
+        polygon = read_polygon(f, cls).normalized()
         n = int(f.readline())
         points = []
         for _ in range(n):
             points.append(read_point(f))
-        return Input(polygon.normalized().prepared(), points)
+        return Input(polygon.prepared(), points)
 
 
 def calc_positions(inputs):

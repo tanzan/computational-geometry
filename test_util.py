@@ -25,6 +25,13 @@ def read_polygon(file, cls=Polygon):
     return cls(shell)
 
 
+def read_multi_point(file):
+    size = int(file.readline())
+    points = read_point_seq(file)
+    assert size == len(points)
+    return points
+
+
 def read_expected_polygon_pos(filename):
     with open(filename) as f:
         expected = []

@@ -3,8 +3,7 @@ from .segment import Segment, SegmentPos
 from .point import Point
 import numpy as np
 import bisect as bs
-# TODO howto import the whole submodule
-from .angle import oriented as oriented_angle
+from . import angle
 
 
 class PolygonPos(enum.Enum):
@@ -115,7 +114,7 @@ class Polygon:
         segs = norm.segments
 
         for i in range(len(segs)):
-            if oriented_angle(segs[i].reversed(), segs[(i + 1) % len(segs)]) <= 0:
+            if angle.oriented(segs[i].reversed(), segs[(i + 1) % len(segs)]) <= 0:
                 return False
 
         return True
