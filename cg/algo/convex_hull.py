@@ -9,12 +9,12 @@ def graham(points):
 
         for point in sorted_points[2:]:
             hull.append(point)
-            while len(hull) > 2 and not pos(Segment(hull[-3], hull[-2]).relative_pos(hull[-1])):
+            while len(hull) > 2 and pos != Segment(hull[-3], hull[-2]).relative_pos(hull[-1]):
                 del hull[-2]
         return hull
 
-    upper_hull = semi_hull(lambda pos: pos == SegmentPos.RIGHT)
+    upper_hull = semi_hull(SegmentPos.RIGHT)
 
-    lower_hull = semi_hull(lambda pos: pos == SegmentPos.LEFT)
+    lower_hull = semi_hull(SegmentPos.LEFT)
 
     return ConvexPolygon(upper_hull + list(reversed(lower_hull[1:-1])))
