@@ -1,4 +1,4 @@
-from geometry import *
+from cg.geometry import *
 import os
 
 

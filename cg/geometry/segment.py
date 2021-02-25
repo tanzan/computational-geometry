@@ -44,6 +44,9 @@ class Segment:
     def __str__(self):
         return "SEGMENT(" + str(self._start) + "," + str(self._end) + ")"
 
+    def __eq__(self, other):
+        return self.start == other.start and self.end == other.end
+
     @property
     def angle(self):
         v = self.vec

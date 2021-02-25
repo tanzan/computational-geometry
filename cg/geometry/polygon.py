@@ -37,7 +37,10 @@ class Polygon:
         return self._points
 
     def __str__(self):
-        return f"POLYGON({', '.join(str(p) for p in self.points)})"
+        return f"POLYGON(({', '.join(str(p) for p in self.points)}, {str(self.points[0])}))"
+
+    def __eq__(self, other):
+        return self.points == other.points
 
     @property
     def segments(self):

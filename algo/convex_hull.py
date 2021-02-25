@@ -1,3 +1,0 @@
-
-def graham(points):
-    pass
