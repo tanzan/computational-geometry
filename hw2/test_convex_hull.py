@@ -13,9 +13,11 @@ def read_expected_convex_hull(filename):
 
 
 def check(case_name):
-    result = graham(read_points(data(__file__, case_name + ".txt")))
-    expected_result = read_expected_convex_hull(data(__file__, case_name + "_expected.txt"))
-    assert sorted(result.points) == sorted(expected_result)
+    points = read_points(data(__file__, case_name + ".txt"))
+    expected_result = sorted(read_expected_convex_hull(data(__file__, case_name + "_expected.txt")))
+
+    assert sorted(graham(points).points) == expected_result
+    assert sorted(jarvis(points).points) == expected_result
 
 
 def test_case_1():

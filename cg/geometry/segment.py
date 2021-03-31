@@ -41,6 +41,10 @@ class Segment:
     def vec(self):
         return self.end.vec - self.start.vec
 
+    @property
+    def length(self):
+        return np.linalg.norm(self.vec)
+
     def __str__(self):
         return "SEGMENT(" + str(self._start) + "," + str(self._end) + ")"
 

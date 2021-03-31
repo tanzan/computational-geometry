@@ -21,8 +21,14 @@ class Point:
     def __str__(self):
         return str(self._x) + " " + str(self._y)
 
+    def __repr__(self):
+        return f'POINT({self.x} {self.y})'
+
     def __eq__(self, other):
         return self.x == other.x and self.y == other.y
+
+    def __hash__(self):
+        return hash((self.x, self.y))
 
     def __lt__(self, other):
         if self.x == other.x:
